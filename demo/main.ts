@@ -2,25 +2,26 @@ import { audiobars, VisualizerStyle, AudioBarsInstance } from '../src/index';
 
 // Initialize App
 document.addEventListener('DOMContentLoaded', () => {
-  setupPresetPads();
-  setupSynthesizerLab();
-  setupAudioPlayer();
+  const audioEl = document.getElementById('demo-audio') as HTMLAudioElement;
+
+  setupPresetPads(audioEl);
+  setupSynthesizerLab(audioEl);
   setupCopyButtons();
   setupThemeToggle();
 });
 
 /**
- * 1. Attach 6 visualizer style canvases in the Presets Grid
+ * 1. Attach 6 visualizer style canvases connected to real HTML5 Audio Element
  */
-function setupPresetPads(): void {
+function setupPresetPads(audioEl: HTMLAudioElement): void {
   const styles: VisualizerStyle[] = ['bars', 'wave', 'circle', 'voice', 'dots', 'particles'];
 
   styles.forEach((style) => {
     const canvas = document.getElementById(`canvas-${style}`) as HTMLCanvasElement;
     if (canvas) {
-      audiobars.attach(canvas, null, {
+      audiobars.attach(canvas, audioEl, {
         style,
-        idleMotion: true,
+        idleMotion: false, // Stationary when paused, animates ONLY when audio plays!
         colors: getStyleColors(style),
       });
     }
@@ -40,97 +41,7 @@ function getStyleColors(style: VisualizerStyle): string[] {
 }
 
 /**
- * 2. Realtime Web Audio Sample Beat Synthesizer
- */
-let audioCtx: AudioContext | null = null;
-let isPlayingAudio = false;
-let beatTimer: number | null = null;
-
-function setupAudioPlayer(): void {
-  const playBtn = document.getElementById('btn-play-audio')!;
-  const playLabel = document.getElementById('play-sample-label')!;
-
-  playBtn.addEventListener('click', () => {
-    if (!isPlayingAudio) {
-      startSynthBeat();
-      isPlayingAudio = true;
-      playBtn.classList.add('playing');
-      playLabel.textContent = 'PAUSE AUDIO BEAT';
-    } else {
-      stopSynthBeat();
-      isPlayingAudio = false;
-      playBtn.classList.remove('playing');
-      playLabel.textContent = 'PLAY SAMPLE AUDIO BEAT';
-    }
-  });
-}
-
-function startSynthBeat(): void {
-  if (!audioCtx) {
-    const AudioCtxClass = window.AudioContext || (window as unknown as { webkitAudioContext: typeof AudioContext }).webkitAudioContext;
-    audioCtx = new AudioCtxClass();
-  }
-
-  if (audioCtx.state === 'suspended') {
-    audioCtx.resume();
-  }
-
-  const notes = [220, 277.18, 329.63, 440, 554.37, 659.25, 880];
-  let step = 0;
-
-  function playBeatStep(): void {
-    if (!audioCtx || !isPlayingAudio) return;
-
-    const now = audioCtx.currentTime;
-
-    // Bass kick (low frequency)
-    if (step % 2 === 0) {
-      const kickOsc = audioCtx.createOscillator();
-      const kickGain = audioCtx.createGain();
-      kickOsc.type = 'triangle';
-      kickOsc.frequency.setValueAtTime(150, now);
-      kickOsc.frequency.exponentialRampToValueAtTime(40, now + 0.12);
-
-      kickGain.gain.setValueAtTime(0.4, now);
-      kickGain.gain.linearRampToValueAtTime(0.001, now + 0.12);
-
-      kickOsc.connect(kickGain);
-      kickGain.connect(audioCtx.destination);
-      kickOsc.start(now);
-      kickOsc.stop(now + 0.13);
-    }
-
-    // Synth Melody chord
-    const freq = notes[step % notes.length];
-    const osc = audioCtx.createOscillator();
-    const gain = audioCtx.createGain();
-    osc.type = step % 4 === 0 ? 'square' : 'sine';
-    osc.frequency.setValueAtTime(freq, now);
-
-    gain.gain.setValueAtTime(0.18, now);
-    gain.gain.linearRampToValueAtTime(0.001, now + 0.18);
-
-    osc.connect(gain);
-    gain.connect(audioCtx.destination);
-    osc.start(now);
-    osc.stop(now + 0.19);
-
-    step++;
-    beatTimer = window.setTimeout(playBeatStep, 180);
-  }
-
-  playBeatStep();
-}
-
-function stopSynthBeat(): void {
-  if (beatTimer) {
-    clearTimeout(beatTimer);
-    beatTimer = null;
-  }
-}
-
-/**
- * 3. Theme Toggle Handler (Light / Dark)
+ * 2. Theme Toggle Handler (Light / Dark)
  */
 function setupThemeToggle(): void {
   const themeBtn = document.getElementById('toggle-theme')!;
@@ -154,19 +65,19 @@ function setupThemeToggle(): void {
 }
 
 /**
- * 4. Custom Laboratory Style Switcher
+ * 3. Custom Laboratory Style Switcher Connected to Real Audio Element
  */
 let labInstance: AudioBarsInstance | null = null;
 let currentStyle: VisualizerStyle = 'bars';
 
-function setupSynthesizerLab(): void {
+function setupSynthesizerLab(audioEl: HTMLAudioElement): void {
   const styleChips = document.querySelectorAll<HTMLButtonElement>('.style-chip');
   const labCanvas = document.getElementById('lab-canvas') as HTMLCanvasElement;
 
   if (labCanvas) {
-    labInstance = audiobars.attach(labCanvas, null, {
+    labInstance = audiobars.attach(labCanvas, audioEl, {
       style: currentStyle,
-      idleMotion: true,
+      idleMotion: false, // Stationary when paused
       colors: getStyleColors(currentStyle),
     });
   }
@@ -193,15 +104,15 @@ function updateLabCode(): void {
 const canvas = document.querySelector('#spectrum-canvas');
 const audioEl = document.querySelector('#audio-player');
 
-// Attach 60 FPS spectrum visualizer
+// Attach 60 FPS spectrum visualizer to HTML5 audio element
 audiobars.${currentStyle}(canvas, audioEl, {
   colors: ['#6366f1', '#06b6d4', '#38bdf8'],
-  idleMotion: true
+  idleMotion: false
 });`;
 }
 
 /**
- * 5. Clipboard Copy Utilities
+ * 4. Clipboard Copy Utilities
  */
 function setupCopyButtons(): void {
   const copyInstallBtn = document.getElementById('copy-install-btn')!;
