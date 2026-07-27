@@ -1,0 +1,280 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="light">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>audiobars — 60 FPS Real-Time HTML5 Canvas Audio Spectrum Visualizer</title>
+  <meta name="description" content="Ultra-lightweight, zero-dependency 60 FPS HTML5 Canvas audio spectrum visualization micro-library with 0KB assets.">
+  <link rel="icon" href="data:,">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="./demo/styles.css">
+</head>
+<body>
+  <div class="app-shell">
+    <div class="container">
+      
+      <!-- Header -->
+      <header class="header">
+        <div class="top-meta">
+          <div class="status-indicator">
+            <span class="status-dot"></span>
+            <span>60 FPS CANVAS SPECTRUM • &lt; 2.2 KB GZIPPED • ZERO DEPENDENCIES</span>
+          </div>
+          <span class="version-tag">v1.0.0</span>
+        </div>
+
+        <div class="brand-row">
+          <h1 class="brand-logo">
+            <svg class="brand-icon" width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="square" stroke-linejoin="miter">
+              <path d="M12 2v20M17 5v14M7 8v8M2 11v2M22 11v2"></path>
+            </svg>
+            <span>audiobars</span>
+          </h1>
+          
+          <div class="header-actions">
+            <a href="https://github.com/fullstackusama/audiobars" target="_blank" rel="noopener noreferrer" class="btn-header-link">
+              <svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor"><path d="M12 0C5.37 0 0 5.37 0 12c0 5.31 3.435 9.795 8.205 11.385.6.105.825-.255.825-.57 0-.285-.015-1.23-.015-2.235-3.015.555-3.795-.735-4.035-1.41-.135-.345-.72-1.41-1.23-1.695-.42-.225-1.02-.78-.015-.795.945-.015 1.62.87 1.845 1.23 1.08 1.815 2.805 1.305 3.495.99.105-.78.42-1.305.765-1.605-2.67-.3-5.46-1.335-5.46-5.925 0-1.305.465-2.385 1.23-3.225-.12-.3-.54-1.53.12-3.18 0 0 1.005-.315 3.3 1.23.96-.27 1.98-.405 3-.405s2.04.135 3 .405c2.295-1.56 3.3-1.23 3.3-1.23.66 1.65.24 2.88.12 3.18.765.84 1.23 1.905 1.23 3.225 0 4.605-2.805 5.625-5.475 5.925.435.375.81 1.095.81 2.22 0 1.605-.015 2.895-.015 3.3 0 .315.225.69.825.57A12.02 12.02 0 0024 12c0-6.63-5.37-12-12-12z"/></svg>
+              <span>GitHub</span>
+              <svg width="14" height="14" viewBox="0 0 24 24" fill="currentColor" class="star-icon"><path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"></path></svg>
+            </a>
+
+            <a href="https://www.npmjs.com/package/audiobars" target="_blank" rel="noopener noreferrer" class="btn-header-link btn-npm">
+              <svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor"><path d="M1.763 0C.786 0 0 .786 0 1.763v20.474C0 23.214.786 24 1.763 24h20.474c.977 0 1.763-.786 1.763-1.763V1.763C24 .786 23.214 0 22.237 0H1.763zM5.13 5.13h13.74v13.74H15.45V8.565h-3.435v10.305H5.13V5.13z"/></svg>
+              <span>npm v1.0.0</span>
+            </a>
+
+            <div class="command-box">
+              <span class="prompt">$</span>
+              <code>npm install audiobars</code>
+              <button class="btn-copy-icon" id="copy-install-btn" title="Copy install command">
+                <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="9" y="9" width="13" height="13" rx="0" ry="0"></rect><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"></path></svg>
+              </button>
+            </div>
+          </div>
+        </div>
+
+        <p class="hero-desc">
+          Ultra-lightweight, 60 FPS HTML5 Canvas audio spectrum visualizer. Connects to HTML audio tags, Web Audio nodes, or microphone streams with zero layout shift and 0 idle CPU overhead.
+        </p>
+      </header>
+
+      <!-- Minimalist Controls Bar -->
+      <div class="controls-bar">
+        <div class="control-group">
+          <span>THEME SWITCHER</span>
+        </div>
+
+        <div class="control-actions">
+          <button id="toggle-theme" class="btn-toggle" title="Toggle Light/Dark Theme">
+            <svg class="toggle-icon theme-sun" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="5"></circle><line x1="12" y1="1" x2="12" y2="3"></line><line x1="12" y1="21" x2="12" y2="23"></line><line x1="4.22" y1="4.22" x2="5.64" y2="5.64"></line><line x1="18.36" y1="18.36" x2="19.78" y2="19.78"></line><line x1="1" y1="12" x2="3" y2="12"></line><line x1="21" y1="12" x2="23" y2="12"></line><line x1="4.22" y1="19.78" x2="5.64" y2="18.36"></line><line x1="18.36" y1="5.64" x2="19.78" y2="4.22"></line></svg>
+            <span id="theme-label">DARK THEME</span>
+          </button>
+        </div>
+      </div>
+
+      <!-- Presets Matrix -->
+      <section class="section">
+        <div class="section-header">
+          <h2 class="section-title">VISUALIZER STYLES MATRIX</h2>
+          <span class="section-subtitle">Real-time 60 FPS spectrum visualizer canvas presets</span>
+        </div>
+
+        <div class="presets-grid">
+          <!-- Bars -->
+          <div class="vis-pad">
+            <div class="pad-header">
+              <span class="pad-name">audiobars.bars()</span>
+              <span class="pad-tag">EQUALIZER</span>
+            </div>
+            <div class="pad-canvas-box">
+              <canvas id="canvas-bars" class="pad-canvas"></canvas>
+            </div>
+          </div>
+
+          <!-- Wave -->
+          <div class="vis-pad">
+            <div class="pad-header">
+              <span class="pad-name">audiobars.wave()</span>
+              <span class="pad-tag">OSCILLOSCOPE</span>
+            </div>
+            <div class="pad-canvas-box">
+              <canvas id="canvas-wave" class="pad-canvas"></canvas>
+            </div>
+          </div>
+
+          <!-- Circle -->
+          <div class="vis-pad">
+            <div class="pad-header">
+              <span class="pad-name">audiobars.circle()</span>
+              <span class="pad-tag">RADIAL RING</span>
+            </div>
+            <div class="pad-canvas-box">
+              <canvas id="canvas-circle" class="pad-canvas"></canvas>
+            </div>
+          </div>
+
+          <!-- Voice -->
+          <div class="vis-pad">
+            <div class="pad-header">
+              <span class="pad-name">audiobars.voice()</span>
+              <span class="pad-tag">AI VOICE NOTE</span>
+            </div>
+            <div class="pad-canvas-box">
+              <canvas id="canvas-voice" class="pad-canvas"></canvas>
+            </div>
+          </div>
+
+          <!-- Dots -->
+          <div class="vis-pad">
+            <div class="pad-header">
+              <span class="pad-name">audiobars.dots()</span>
+              <span class="pad-tag">SPECTRUM MATRIX</span>
+            </div>
+            <div class="pad-canvas-box">
+              <canvas id="canvas-dots" class="pad-canvas"></canvas>
+            </div>
+          </div>
+
+          <!-- Particles -->
+          <div class="vis-pad">
+            <div class="pad-header">
+              <span class="pad-name">audiobars.particles()</span>
+              <span class="pad-tag">AURA SPECKS</span>
+            </div>
+            <div class="pad-canvas-box">
+              <canvas id="canvas-particles" class="pad-canvas"></canvas>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- Visualizer Laboratory -->
+      <section class="section">
+        <div class="section-header">
+          <h2 class="section-title">VISUALIZER LABORATORY</h2>
+          <span class="section-subtitle">Select visualizer styles and preview live synthetic frequency motion</span>
+        </div>
+
+        <div class="lab-card">
+          <div class="lab-controls">
+            
+            <div class="form-row">
+              <label class="form-label">VISUALIZER STYLE</label>
+              <div class="style-selector">
+                <button class="style-chip active" data-style="bars">Bars</button>
+                <button class="style-chip" data-style="wave">Wave</button>
+                <button class="style-chip" data-style="circle">Circle</button>
+                <button class="style-chip" data-style="voice">Voice</button>
+                <button class="style-chip" data-style="dots">Dots</button>
+                <button class="style-chip" data-style="particles">Particles</button>
+              </div>
+            </div>
+
+            <!-- Lab Canvas Container -->
+            <div class="lab-canvas-container">
+              <canvas id="lab-canvas" class="lab-canvas"></canvas>
+            </div>
+          </div>
+
+          <!-- Code Snippet Output -->
+          <div class="code-box">
+            <div class="code-box-header">
+              <span>GENERATED CODE</span>
+              <button id="copy-code-btn" class="btn-copy-sm">
+                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="9" y="9" width="13" height="13" rx="0" ry="0"></rect><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"></path></svg>
+                <span>COPY CODE</span>
+              </button>
+            </div>
+            <pre><code id="code-snippet">import { audiobars } from 'audiobars';
+
+const canvas = document.querySelector('#spectrum-canvas');
+const audioEl = document.querySelector('#audio-player');
+
+// Attach 60 FPS spectrum visualizer
+audiobars.bars(canvas, audioEl, {
+  colors: ['#6366f1', '#06b6d4', '#38bdf8'],
+  idleMotion: true
+});</code></pre>
+          </div>
+        </div>
+      </section>
+
+      <!-- Code Integration Cards -->
+      <section class="section">
+        <div class="section-header">
+          <h2 class="section-title">INTEGRATION EXAMPLES</h2>
+          <span class="section-subtitle">Vanilla JS, React 18/19, and Next.js App Router</span>
+        </div>
+
+        <div class="cards-grid">
+          <div class="code-card">
+            <div class="card-header">
+              <span>VANILLA JS / TYPESCRIPT</span>
+              <button class="btn-copy-sm copy-ex-btn" data-target="code-vanilla">
+                <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="9" y="9" width="13" height="13" rx="0" ry="0"></rect><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"></path></svg>
+                <span>COPY</span>
+              </button>
+            </div>
+            <pre><code id="code-vanilla">import { audiobars } from 'audiobars';
+
+const canvas = document.querySelector('#my-canvas');
+const audioEl = document.querySelector('#audio-tag');
+
+// Equalizer bars
+audiobars.bars(canvas, audioEl);
+
+// Voice note wave
+audiobars.voice(canvas, audioEl);</code></pre>
+          </div>
+
+          <div class="code-card">
+            <div class="card-header">
+              <span>REACT / NEXT.JS APP ROUTER</span>
+              <button class="btn-copy-sm copy-ex-btn" data-target="code-react">
+                <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="9" y="9" width="13" height="13" rx="0" ry="0"></rect><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"></path></svg>
+                <span>COPY</span>
+              </button>
+            </div>
+            <pre><code id="code-react">'use client';
+
+import { AudioBars } from 'audiobars/react';
+
+export function VoiceNotePlayer() {
+  return (
+    &lt;AudioBars 
+      style="voice" 
+      colors={['#38bdf8', '#818cf8', '#a855f7']} 
+    /&gt;
+  );
+}</code></pre>
+          </div>
+        </div>
+      </section>
+
+      <!-- Footer -->
+      <footer class="footer">
+        <p>
+          CREATED BY 
+          <a href="https://github.com/fullstackusama/audiobars" target="_blank" rel="noopener noreferrer" class="author-link">
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor"><path d="M12 0C5.37 0 0 5.37 0 12c0 5.31 3.435 9.795 8.205 11.385.6.105.825-.255.825-.57 0-.285-.015-1.23-.015-2.235-3.015.555-3.795-.735-4.035-1.41-.135-.345-.72-1.41-1.23-1.695-.42-.225-1.02-.78-.015-.795.945-.015 1.62.87 1.845 1.23 1.08 1.815 2.805 1.305 3.495.99.105-.78.42-1.305.765-1.605-2.67-.3-5.46-1.335-5.46-5.925 0-1.305.465-2.385 1.23-3.225-.12-.3-.54-1.53.12-3.18 0 0 1.005-.315 3.3 1.23.96-.27 1.98-.405 3-.405s2.04.135 3 .405c2.295-1.56 3.3-1.23 3.3-1.23.66 1.65.24 2.88.12 3.18.765.84 1.23 1.905 1.23 3.225 0 4.605-2.805 5.625-5.475 5.925.435.375.81 1.095.81 2.22 0 1.605-.015 2.895-.015 3.3 0 .315.225.69.825.57A12.02 12.02 0 0024 12c0-6.63-5.37-12-12-12z"/></svg>
+            <strong>fullstackusama</strong>
+          </a> 
+          • 
+          <a href="https://www.npmjs.com/package/audiobars" target="_blank" rel="noopener noreferrer" class="author-link npm-link">
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="currentColor"><path d="M1.763 0C.786 0 0 .786 0 1.763v20.474C0 23.214.786 24 1.763 24h20.474c.977 0 1.763-.786 1.763-1.763V1.763C24 .786 23.214 0 22.237 0H1.763zM5.13 5.13h13.74v13.74H15.45V8.565h-3.435v10.305H5.13V5.13z"/></svg>
+            <strong>npm package</strong>
+          </a>
+          • OPEN SOURCE MIT LICENSE
+        </p>
+      </footer>
+
+    </div>
+  </div>
+
+  <div id="toast" class="toast-box">Copied to clipboard</div>
+
+  <script type="module" src="./demo/main.ts"></script>
+</body>
+</html>
