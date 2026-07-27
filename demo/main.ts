@@ -6,12 +6,13 @@ document.addEventListener('DOMContentLoaded', () => {
 
   setupPresetPads(audioEl);
   setupSynthesizerLab(audioEl);
+  setupCustomPlayer(audioEl);
   setupCopyButtons();
   setupThemeToggle();
 });
 
 /**
- * 1. Attach 6 visualizer style canvases connected to real HTML5 Audio Element
+ * 1. Attach 6 visualizer style canvases connected to HTML5 Audio Element
  */
 function setupPresetPads(audioEl: HTMLAudioElement): void {
   const styles: VisualizerStyle[] = ['bars', 'wave', 'circle', 'voice', 'dots', 'particles'];
@@ -21,7 +22,7 @@ function setupPresetPads(audioEl: HTMLAudioElement): void {
     if (canvas) {
       audiobars.attach(canvas, audioEl, {
         style,
-        idleMotion: false, // Stationary when paused, animates ONLY when audio plays!
+        idleMotion: false, // 100% stationary when paused, animates ONLY when audio plays!
         colors: getStyleColors(style),
       });
     }
@@ -41,7 +42,59 @@ function getStyleColors(style: VisualizerStyle): string[] {
 }
 
 /**
- * 2. Theme Toggle Handler (Light / Dark)
+ * 2. Custom Minimalist Audio Player Event Logic
+ */
+function setupCustomPlayer(audioEl: HTMLAudioElement): void {
+  const playBtn = document.getElementById('custom-play-btn')!;
+  const playSvg = document.getElementById('play-svg')!;
+  const pauseSvg = document.getElementById('pause-svg')!;
+  const btnLabel = document.getElementById('player-btn-label')!;
+  const progressBar = document.getElementById('player-progress-bar')!;
+  const timeText = document.getElementById('player-time')!;
+
+  playBtn.addEventListener('click', () => {
+    if (audioEl.paused) {
+      audioEl.play().then(() => {
+        playBtn.classList.add('playing');
+        playSvg.style.display = 'none';
+        pauseSvg.style.display = 'inline-block';
+        btnLabel.textContent = 'PAUSE VOCALS & BEAT';
+      }).catch((err) => {
+        console.error('Audio play error:', err);
+      });
+    } else {
+      audioEl.pause();
+      playBtn.classList.remove('playing');
+      playSvg.style.display = 'inline-block';
+      pauseSvg.style.display = 'none';
+      btnLabel.textContent = 'PLAY SAMPLE VOCALS & BEAT';
+    }
+  });
+
+  audioEl.addEventListener('timeupdate', () => {
+    if (!audioEl.duration) return;
+    const pct = (audioEl.currentTime / audioEl.duration) * 100;
+    progressBar.style.width = `${pct}%`;
+    timeText.textContent = `${formatTime(audioEl.currentTime)} / ${formatTime(audioEl.duration)}`;
+  });
+
+  audioEl.addEventListener('ended', () => {
+    playBtn.classList.remove('playing');
+    playSvg.style.display = 'inline-block';
+    pauseSvg.style.display = 'none';
+    btnLabel.textContent = 'PLAY SAMPLE VOCALS & BEAT';
+    progressBar.style.width = '0%';
+  });
+}
+
+function formatTime(secs: number): string {
+  const m = Math.floor(secs / 60);
+  const s = Math.floor(secs % 60);
+  return `${m}:${s < 10 ? '0' : ''}${s}`;
+}
+
+/**
+ * 3. Theme Toggle Handler (Light / Dark)
  */
 function setupThemeToggle(): void {
   const themeBtn = document.getElementById('toggle-theme')!;
@@ -65,7 +118,7 @@ function setupThemeToggle(): void {
 }
 
 /**
- * 3. Custom Laboratory Style Switcher Connected to Real Audio Element
+ * 4. Custom Laboratory Style Switcher
  */
 let labInstance: AudioBarsInstance | null = null;
 let currentStyle: VisualizerStyle = 'bars';
@@ -77,7 +130,7 @@ function setupSynthesizerLab(audioEl: HTMLAudioElement): void {
   if (labCanvas) {
     labInstance = audiobars.attach(labCanvas, audioEl, {
       style: currentStyle,
-      idleMotion: false, // Stationary when paused
+      idleMotion: false,
       colors: getStyleColors(currentStyle),
     });
   }
@@ -112,7 +165,7 @@ audiobars.${currentStyle}(canvas, audioEl, {
 }
 
 /**
- * 4. Clipboard Copy Utilities
+ * 5. Clipboard Copy Utilities
  */
 function setupCopyButtons(): void {
   const copyInstallBtn = document.getElementById('copy-install-btn')!;

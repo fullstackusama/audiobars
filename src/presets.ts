@@ -24,7 +24,7 @@ export class AudioBarsInstance {
       colors: options.colors ?? ['#6366f1', '#06b6d4', '#38bdf8'],
       barRadius: options.barRadius ?? 4,
       barSpacing: options.barSpacing ?? 3,
-      idleMotion: options.idleMotion ?? true,
+      idleMotion: options.idleMotion ?? false,
     };
 
     this.init();
@@ -40,6 +40,7 @@ export class AudioBarsInstance {
       this.analyzer.connectMedia(this.mediaEl, this.options.fftSize);
       this.mediaEl.addEventListener('play', () => this.start());
       this.mediaEl.addEventListener('pause', () => this.stopIfIdle());
+      this.mediaEl.addEventListener('ended', () => this.stopIfIdle());
     }
 
     this.start();
@@ -73,6 +74,20 @@ export class AudioBarsInstance {
     if (!this.options.idleMotion) {
       this.isRunning = false;
       if (this.rafId) cancelAnimationFrame(this.rafId);
+      // Clear canvas when stopped
+      if (this.ctx && this.canvas) {
+        const rect = this.canvas.getBoundingClientRect();
+        renderSpectrum(
+          this.ctx,
+          rect.width || 300,
+          rect.height || 100,
+          new Uint8Array(this.options.fftSize / 2),
+          this.options.style,
+          this.options.colors,
+          this.options.barRadius,
+          this.options.barSpacing
+        );
+      }
     }
   }
 
@@ -84,15 +99,22 @@ export class AudioBarsInstance {
     const height = rect.height || 100;
 
     const analyser = this.analyzer.getExistingAnalyser();
-    let dataArray: any;
+    const bufferLength = this.options.fftSize / 2;
+    let dataArray: any = new Uint8Array(bufferLength);
 
-    if (analyser && this.mediaEl && !this.mediaEl.paused) {
-      const bufferLength = analyser.frequencyBinCount;
-      dataArray = new Uint8Array(bufferLength);
-      analyser.getByteFrequencyData(dataArray);
-    } else {
+    if (this.mediaEl) {
+      if (!this.mediaEl.paused && !this.mediaEl.ended) {
+        if (analyser) {
+          analyser.getByteFrequencyData(dataArray);
+        }
+      } else if (this.options.idleMotion) {
+        this.timeOffset += 0.05;
+        dataArray = this.analyzer.getSyntheticData(bufferLength, this.timeOffset);
+      }
+      // If paused and idleMotion is false -> dataArray remains all 0s (STILL & QUIET)
+    } else if (this.options.idleMotion) {
       this.timeOffset += 0.05;
-      dataArray = this.analyzer.getSyntheticData(this.options.fftSize / 2, this.timeOffset);
+      dataArray = this.analyzer.getSyntheticData(bufferLength, this.timeOffset);
     }
 
     renderSpectrum(

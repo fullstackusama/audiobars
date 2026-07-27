@@ -60,11 +60,21 @@
         </p>
       </header>
 
-      <!-- Minimalist Controls Bar & Real HTML5 Audio Player -->
+      <!-- Custom Minimalist Audio Player Controls Bar -->
       <div class="controls-bar">
         <div class="control-group audio-player-group">
-          <span class="player-label">SAMPLE AUDIO TRACK:</span>
-          <audio id="demo-audio" controls loop src="./demo/sample.wav" class="real-audio-player"></audio>
+          <audio id="demo-audio" preload="auto" loop src="./demo/vocal_track.wav"></audio>
+          
+          <button id="custom-play-btn" class="btn-play-custom" title="Play / Pause Audio Track">
+            <svg id="play-svg" width="16" height="16" viewBox="0 0 24 24" fill="currentColor"><polygon points="5 3 19 12 5 21 5 3"></polygon></svg>
+            <svg id="pause-svg" width="16" height="16" viewBox="0 0 24 24" fill="currentColor" style="display:none;"><rect x="6" y="4" width="4" height="16"></rect><rect x="14" y="4" width="4" height="16"></rect></svg>
+            <span id="player-btn-label">PLAY SAMPLE VOCALS & BEAT</span>
+          </button>
+
+          <div class="player-progress-box">
+            <div id="player-progress-bar" class="player-progress-bar"></div>
+          </div>
+          <span id="player-time" class="player-time-text">0:00 / 0:15</span>
         </div>
 
         <div class="control-actions">
