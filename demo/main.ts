@@ -62,10 +62,9 @@ function setupCustomPlayer(audioEl: HTMLAudioElement, analyzer: AudioAnalyzer): 
         playBtn.classList.add('playing');
         playSvg.style.display = 'none';
         pauseSvg.style.display = 'inline-block';
-        btnLabel.textContent = 'PAUSE VOCALS & BEAT';
+        btnLabel.textContent = 'PAUSE PODCAST SPEECH';
       }).catch((err) => {
         console.error('Audio play error:', err);
-        // Retry play
         audioEl.play();
       });
     } else {
@@ -73,7 +72,7 @@ function setupCustomPlayer(audioEl: HTMLAudioElement, analyzer: AudioAnalyzer): 
       playBtn.classList.remove('playing');
       playSvg.style.display = 'inline-block';
       pauseSvg.style.display = 'none';
-      btnLabel.textContent = 'PLAY SAMPLE VOCALS & BEAT';
+      btnLabel.textContent = 'PLAY TED TALK / PODCAST SPEECH';
     }
   });
 
@@ -81,14 +80,14 @@ function setupCustomPlayer(audioEl: HTMLAudioElement, analyzer: AudioAnalyzer): 
     if (!audioEl.duration) return;
     const pct = (audioEl.currentTime / audioEl.duration) * 100;
     progressBar.style.width = `${pct}%`;
-    timeText.textContent = `${formatTime(audioEl.currentTime)} / ${formatTime(audioEl.duration || 15)}`;
+    timeText.textContent = `${formatTime(audioEl.currentTime)} / ${formatTime(audioEl.duration || 34)}`;
   });
 
   audioEl.addEventListener('ended', () => {
     playBtn.classList.remove('playing');
     playSvg.style.display = 'inline-block';
     pauseSvg.style.display = 'none';
-    btnLabel.textContent = 'PLAY SAMPLE VOCALS & BEAT';
+    btnLabel.textContent = 'PLAY TED TALK / PODCAST SPEECH';
     progressBar.style.width = '0%';
   });
 }
