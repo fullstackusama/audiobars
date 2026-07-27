@@ -241,6 +241,30 @@ body {
   transition: all 0.15s ease;
 }
 
+.btn-play-sample {
+  background: var(--btn-action-bg);
+  color: var(--btn-action-text);
+  border: none;
+  padding: 0.55rem 1.1rem;
+  font-family: var(--font-mono);
+  font-size: 0.8rem;
+  font-weight: 700;
+  cursor: pointer;
+  display: inline-flex;
+  align-items: center;
+  gap: 0.6rem;
+  transition: all 0.15s ease;
+}
+
+.btn-play-sample:hover {
+  background: var(--btn-action-hover);
+}
+
+.btn-play-sample.playing {
+  background: var(--accent-cyan);
+  color: #000000;
+}
+
 .btn-toggle:hover {
   border-color: var(--border-hover);
   color: var(--text-main);
