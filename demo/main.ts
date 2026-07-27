@@ -1,12 +1,13 @@
-import { audiobars, VisualizerStyle, AudioBarsInstance } from '../src/index';
+import { audiobars, VisualizerStyle, AudioBarsInstance, AudioAnalyzer } from '../src/index';
 
 // Initialize App
 document.addEventListener('DOMContentLoaded', () => {
   const audioEl = document.getElementById('demo-audio') as HTMLAudioElement;
+  const analyzer = new AudioAnalyzer();
 
   setupPresetPads(audioEl);
   setupSynthesizerLab(audioEl);
-  setupCustomPlayer(audioEl);
+  setupCustomPlayer(audioEl, analyzer);
   setupCopyButtons();
   setupThemeToggle();
 });
@@ -44,7 +45,7 @@ function getStyleColors(style: VisualizerStyle): string[] {
 /**
  * 2. Custom Minimalist Audio Player Event Logic
  */
-function setupCustomPlayer(audioEl: HTMLAudioElement): void {
+function setupCustomPlayer(audioEl: HTMLAudioElement, analyzer: AudioAnalyzer): void {
   const playBtn = document.getElementById('custom-play-btn')!;
   const playSvg = document.getElementById('play-svg')!;
   const pauseSvg = document.getElementById('pause-svg')!;
@@ -53,6 +54,9 @@ function setupCustomPlayer(audioEl: HTMLAudioElement): void {
   const timeText = document.getElementById('player-time')!;
 
   playBtn.addEventListener('click', () => {
+    // Unlock AudioContext inside user gesture
+    analyzer.resumeContext();
+
     if (audioEl.paused) {
       audioEl.play().then(() => {
         playBtn.classList.add('playing');
@@ -61,6 +65,8 @@ function setupCustomPlayer(audioEl: HTMLAudioElement): void {
         btnLabel.textContent = 'PAUSE VOCALS & BEAT';
       }).catch((err) => {
         console.error('Audio play error:', err);
+        // Retry play
+        audioEl.play();
       });
     } else {
       audioEl.pause();
@@ -75,7 +81,7 @@ function setupCustomPlayer(audioEl: HTMLAudioElement): void {
     if (!audioEl.duration) return;
     const pct = (audioEl.currentTime / audioEl.duration) * 100;
     progressBar.style.width = `${pct}%`;
-    timeText.textContent = `${formatTime(audioEl.currentTime)} / ${formatTime(audioEl.duration)}`;
+    timeText.textContent = `${formatTime(audioEl.currentTime)} / ${formatTime(audioEl.duration || 15)}`;
   });
 
   audioEl.addEventListener('ended', () => {
@@ -88,6 +94,7 @@ function setupCustomPlayer(audioEl: HTMLAudioElement): void {
 }
 
 function formatTime(secs: number): string {
+  if (isNaN(secs)) return '0:00';
   const m = Math.floor(secs / 60);
   const s = Math.floor(secs % 60);
   return `${m}:${s < 10 ? '0' : ''}${s}`;
